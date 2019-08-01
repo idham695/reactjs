@@ -6,6 +6,14 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
+const name = "Idham";
+
+function getName() {
+    return "Halo " + name
+}
+
+const element = <h1> {getName(name)} </h1>;
+ReactDOM.render(element, document.getElementById('master'));
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
