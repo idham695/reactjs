@@ -11,7 +11,8 @@ class BlogPost extends Component {
             title: '',
             body: '',
             userId: 1
-        }
+        },
+        isUpdate: false
     }
 
     getdata = () => {
@@ -27,8 +28,33 @@ class BlogPost extends Component {
         axios.post('http://localhost:3004/posts', this.state.formBlogPost).then((res) => {
             console.log(res)
             this.getdata()
+            this.setState({
+                isUpdate: false,
+                formBlogPost: {
+                    id: 1,
+                    title: '',
+                    body: '',
+                    userId: 1
+                },
+            })
         }, (err) => {
             console.log('error', err)
+        })
+    }
+
+    putdata = (data) => {
+        axios.put(`http://localhost:3004/posts/${this.state.formBlogPost.id}`, this.state.formBlogPost).then((res) => {
+            console.log(res)
+            this.getdata()
+            this.setState({
+                isUpdate: false,
+                formBlogPost: {
+                    id: 1,
+                    title: '',
+                    body: '',
+                    userId: 1
+                },
+            })
         })
     }
 
@@ -38,10 +64,20 @@ class BlogPost extends Component {
         })
     }
 
+    handleUpdate = (data) => {
+        console.log(data)
+        this.setState({
+            formBlogPost: data,
+            isUpdate: true
+        })
+    }
+
     handleFormChange = (event) => {
         let formBlogPostNew = { ...this.state.formBlogPost }
         let timestamp = new Date().getTime()
-        formBlogPostNew['id'] = timestamp
+        if (!this.state.isUpdate) {
+            formBlogPostNew['id'] = timestamp
+        }
         formBlogPostNew[event.target.name] = event.target.value
         this.setState({
             formBlogPost: formBlogPostNew
@@ -49,7 +85,11 @@ class BlogPost extends Component {
     }
 
     handleSubmit = () => {
-        this.postdata()
+        if (this.state.isUpdate) {
+            this.putdata()
+        } else {
+            this.postdata()
+        }
     }
 
     componentDidMount() {
@@ -61,14 +101,14 @@ class BlogPost extends Component {
                 <p>Blog Post</p>
                 <div className="form-add-post">
                     <label htmlFor="title">Title</label>
-                    <input type="text" name="title" placeholder='add title' onChange={this.handleFormChange} />
+                    <input type="text" value={this.state.formBlogPost.title} name="title" placeholder='add title' onChange={this.handleFormChange} />
                     < label htmlFor="body">Blog Content</label>
-                    <textarea name="body" id="body" cols="30" rows="10" placeholder="add blog content" onChange={this.handleFormChange}></textarea>
+                    <textarea name="body" value={this.state.formBlogPost.body} id="body" cols="30" rows="10" placeholder="add blog content" onChange={this.handleFormChange}></textarea>
                     <button onClick={this.handleSubmit}>simpan</button>
                 </div>
                 {
                     this.state.post.map(post => {
-                        return <Post key={post.id} data={post} remove={this.handleRemove} />
+                        return <Post key={post.id} data={post} remove={this.handleRemove} update={this.handleUpdate} />
                     })
                 }
 
