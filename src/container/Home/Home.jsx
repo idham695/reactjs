@@ -1,9 +1,15 @@
+// Libraries
 import React, { Component, Fragment } from 'react';
-import YoutubeComp from '../../component/YoutubeComp/YoutubeComp';
-import Product from '../product/Product';
-import LifeCycle from '../LifeCycle/LifeCycle';
-import BlogPost from '../BlogPost/BlogPost';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import YoutubeCompPage from '../pages/YoutubeCompPage/YoutubeCompPage';
+
+// Component
+import Product from '../pages/product/Product';
+import LifeCycle from '../pages/LifeCycle/LifeCycle';
+import BlogPost from '../pages/BlogPost/BlogPost';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import DetailPost from '../../component/Post/DetailPost/DetailPost';
+
+// Style
 import './Home.css';
 
 class Home extends Component {
@@ -19,18 +25,21 @@ class Home extends Component {
     }
     render() {
         return (
-            <BrowserRouter>
+            <Router>
                 <Fragment>
                     <div className="navigation">
                         <Link to="/">Blog Post</Link>
                         <Link to="/product">Product</Link>
                         <Link to="/lifecycle">LifeCycle</Link>
+                        <Link to="/youtube-component">Youtube</Link>
                     </div>
                     <Route path="/" exact component={BlogPost} />
+                    <Route path="/detail-post/:id" component={DetailPost} />
                     <Route path="/product" component={Product} />
                     <Route path="/lifecycle" component={LifeCycle} />
+                    <Route path="/youtube-component" component={YoutubeCompPage} />
                 </Fragment>
-            </BrowserRouter>
+            </Router>
         )
     }
 }
