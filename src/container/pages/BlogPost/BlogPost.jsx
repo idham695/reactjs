@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import './BlogPost.css';
 import Post from '../../../component/Post/Post'
-import axios from 'axios'
+import API from '../../../services';
 
 class BlogPost extends Component {
     state = {
@@ -12,21 +12,25 @@ class BlogPost extends Component {
             body: '',
             userId: 1
         },
-        isUpdate: false
+        isUpdate: false,
+        comments: []
     }
 
     getdata = () => {
-        axios.get('http://localhost:3004/posts?_sort=id&_order=desc')
-            .then((res) => {
-                this.setState({
-                    post: res.data
-                })
+        API.getNewsBlog().then(result => {
+            this.setState({
+                post: result
             })
+        })
+        API.getComments().then(result => {
+            this.setState({
+                comments: result
+            })
+        })
     }
 
     postdata = () => {
-        axios.post('http://localhost:3004/posts', this.state.formBlogPost).then((res) => {
-            console.log(res)
+        API.postNewsBlog(this.state.formBlogPost).then((res) => {
             this.getdata()
             this.setState({
                 isUpdate: false,
@@ -37,14 +41,11 @@ class BlogPost extends Component {
                     userId: 1
                 },
             })
-        }, (err) => {
-            console.log('error', err)
         })
     }
 
     putdata = (data) => {
-        axios.put(`http://localhost:3004/posts/${this.state.formBlogPost.id}`, this.state.formBlogPost).then((res) => {
-            console.log(res)
+        API.updateNewsBlog(this.state.formBlogPost, this.state.formBlogPost.id).then(result => {
             this.getdata()
             this.setState({
                 isUpdate: false,
@@ -59,7 +60,7 @@ class BlogPost extends Component {
     }
 
     handleRemove = (data) => {
-        axios.delete(`http://localhost:3004/posts/${data}`).then((res) => {
+        API.deleteNewsBlog(data).then(result => {
             this.getdata()
         })
     }
@@ -111,6 +112,11 @@ class BlogPost extends Component {
                     <textarea name="body" value={this.state.formBlogPost.body} id="body" cols="30" rows="10" placeholder="add blog content" onChange={this.handleFormChange}></textarea>
                     <button onClick={this.handleSubmit}>simpan</button>
                 </div>
+                {/* {
+                    this.state.comments.map(comment => {
+                        return <p>{comment.name} - {comment.email}</p>
+                    })
+                } */}
                 {
                     this.state.post.map(post => {
                         return <Post key={post.id} data={post} remove={this.handleRemove} update={this.handleUpdate} goDetail={this.handleDetail} />
